@@ -77,7 +77,12 @@ class PPDocLayoutDetector(BaseLayoutDetector):
             self._device = "cpu"
         self._model = self._model.to(self._device)
         if self.id2label is None:
-            self.id2label = self._model.config.id2label
+            self.id2label = getattr(self._model.config, "id2label", None)
+        if self.id2label is None:
+            raise RuntimeError(
+                "Missing id2label in both layout config and model config; "
+                "please set pipeline.layout.id2label."
+            )
         if self.label_task_mapping is None:
             logger.warning(
                 "layout.label_task_mapping is missing; defaulting all labels to text"
