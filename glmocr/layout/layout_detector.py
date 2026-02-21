@@ -78,6 +78,11 @@ class PPDocLayoutDetector(BaseLayoutDetector):
         self._model = self._model.to(self._device)
         if self.id2label is None:
             self.id2label = self._model.config.id2label
+        if self.label_task_mapping is None:
+            logger.warning(
+                "layout.label_task_mapping is missing; defaulting all labels to text"
+            )
+            self.label_task_mapping = {"text": list(self.id2label.values())}
         logger.debug(f"PP-DocLayoutV3 loaded on device: {self._device}")
 
     def stop(self):
